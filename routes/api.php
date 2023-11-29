@@ -15,7 +15,7 @@ use App\Http\Controllers\Relacion_FCController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
-
+use App\Http\Controllers\BoletasController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,6 +25,21 @@ use App\Http\Controllers\UsuariosController;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
+*/
+
+Route::get('/generar-boleta', [BoletasController::class, 'generarBoleta']);
+
+/*
+instalar los siguientes comandos para el funcionaminto
+
+composer require barryvdh/laravel-dompdf
+
+php artisan vendor:publish --provider="Barryvdh\DomPDF\ServiceProvider"
+
+composer dump-autoload
+
+para la boleta de impresion
+
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
