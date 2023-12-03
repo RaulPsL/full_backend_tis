@@ -56,7 +56,7 @@ class JuradoController extends Controller
                 if($carreras != null){
                     foreach ($carreras as $carrera) {
                         $id_carrera = $carrera['ID_CARRERA'];
-                        $this->createJurado($id, $id_carrera, $id_facultad, 0, [], 'Docente', $data['cantidad'], null);
+                        $this->createJurado($id, $id_carrera, $id_facultad, 0, [], 'Docente', $data['cantidad'], null, $data['participantes']);
                     }
                 }
             }
@@ -70,7 +70,7 @@ class JuradoController extends Controller
      * @param int $int obtiene los ids de los usuarios para integrarlos como jurados
      * @return \Illuminate\Http\Response
      */
-    private function createJurado($id_convo, $id_car, $id_fac, $int, $array, $cargo, $maxJurados, $bit){
+    private function createJurado($id_convo, $id_car, $id_fac, $int, $array, $cargo, $maxJurados, $bit, $cant_part){
         if($int < $maxJurados){
             $ids = Usuario::where('HABILITADO', 'SI')->whereHas(
                 'cargo', function($query) use($cargo){
@@ -80,22 +80,16 @@ class JuradoController extends Controller
                         $query->where('ID_CARRERA', $id_car);
                     }
                 )->pluck('ID_USUARIO')->toArray();
-            $ids_comite = Miembros_Comite::pluck('ID_USUARIO')->all();
-            $ids_jurados = Jurado::pluck('ID_USUARIO')->all();
-            $ids_candidatos = Candidato::pluck('ID_USUARIO')->all();
 
             if (count($ids) < $maxJurados) {
-                return $this->createJurado($id_convo, $id_car, $id_fac, $int, $array, $cargo, $maxJurados-1, $bit);
+                return $this->createJurado($id_convo, $id_car, $id_fac, $int, $array, $cargo, $maxJurados-1, $bit, $cant_part);
             }
 
             $id = $ids[random_int(0, count($ids)-1)];
             $existingJurados = collect($array);
 
-            if ($existingJurados->contains('ID_USUARIO', $id) || 
-                collect($ids_comite)->contains('ID_USUARIO', $id) || 
-                collect($ids_jurados)->contains('ID_USUARIO', $id) || 
-                collect($ids_candidatos)->contains('ID_USUARIO', $id)) {
-                return $this->createJurado($id_convo, $id_car, $id_fac, $int, $array, $cargo, $maxJurados, $bit);
+            if($this->buscador_id($id, $existingJurados) != true) {
+                return $this->createJurado($id_convo, $id_car, $id_fac, $int, $array, $cargo, $maxJurados, $bit, $cant_part);
             }
             $jurado = new Jurado([
                 'ID_USUARIO' => $id,
@@ -130,16 +124,29 @@ class JuradoController extends Controller
                     $i = $i+1;
                 }
                 if($bit == null){
-                    $this->createJurado($id_convo, $id_car, $id_fac, 0, [], 'Estudiante', $maxJurados, $array_new);
+                    $this->createJurado($id_convo, $id_car, $id_fac, 0, [], 'Estudiante', $maxJurados, $array_new, $cant_part);
                 }
-                
             }
-            return $this->createJurado($id_convo, $id_car, $id_fac, $int+1, $array, $cargo, $maxJurados, $bit);
+            return $this->createJurado($id_convo, $id_car, $id_fac, $int+1, $array, $cargo, $maxJurados, $bit, $cant_part);
         } else {
             return $maxJurados;
         }
     }
 
+    private function buscador_id($id, $array){
+        $ids_comite = Miembros_Comite::pluck('ID_USUARIO')->all();
+        $ids_jurados = Jurado::pluck('ID_USUARIO')->all();
+        $ids_candidatos = Candidato::pluck('ID_USUARIO')->all();
+
+        if ($array->contains('ID_USUARIO', $id) ||
+            collect($ids_comite)->contains('ID_USUARIO', $id) || 
+            collect($ids_jurados)->contains('ID_USUARIO', $id) || 
+            collect($ids_candidatos)->contains('ID_USUARIO', $id)) {
+            return false;
+        }else{
+            return true;
+        }
+    }
     /**
      * Display the specified resource.
      *
@@ -163,7 +170,25 @@ class JuradoController extends Controller
     {
         $data = json_decode($request->getContent(), true);
         $usuario = Jurado::find($id);
+        $cargo = "";
+        if($usuario['CARGO'] == "VOCAL TITULAR"){
+            $cargo = "Docente";
+        }else{
+            $cargo = "Estudiante";
+        }
+        $ids = Usuario::where('HABILITADO', 'SI')->whereHas(
+            'cargo', function($query) use($cargo){
+                $query->where('NOMBRE_CARGO', $cargo);
+            })->pluck('ID_USUARIO')->toArray();
+
+        $id_new = $ids[random_int(0, count($ids)-1)];
+        
+        if($this->buscador_id($id_new, []) != true){
+            return $this->update($request, $id);
+        }
+
         $usuario->update([
+            'ID_USUARIO' => $id_new,
             'CARGO' => $data['CARGO']
         ]);
     }
@@ -176,33 +201,6 @@ class JuradoController extends Controller
      */
     public function destroy($id)
     {
-        $usuario= Jurado::find($id);
-        $cargo = "";
-        if($usuario['CARGO'] == "VOCAL TITULAR"){
-            $cargo = "Docente";
-        }else{
-            $cargo = "Estudiante";
-        }
-        $ids = Usuario::where('HABILITADO', 'SI')->whereHas(
-            'cargo', function($query) use($cargo){
-                $query->where('NOMBRE_CARGO', $cargo);
-            })->pluck('ID_USUARIO')->toArray();
-            
-        $ids_comite = Miembros_Comite::pluck('ID_USUARIO')->all();
-        $ids_jurados = Jurado::pluck('ID_USUARIO')->all();
-        $ids_candidatos = Candidato::pluck('ID_USUARIO')->all();
-
-        $id_new = $ids[random_int(0, count($ids)-1)];
-        if (collect($ids_comite)->contains('ID_USUARIO', $id_new) || 
-            collect($ids_jurados)->contains('ID_USUARIO', $id_new) || 
-            collect($ids_candidatos)->contains('ID_USUARIO', $id_new)) {
-            return $this->destroy($id);
-        }
-        $jurado = Jurado::create([
-            'ID_USUARIO' => $id,
-            'ID_MESA' => $usuario['ID_MESA'],
-            'CARGO' => $usuario['CARGO']
-        ]);
-        $usuario->delete();
+        //
     }
 }
