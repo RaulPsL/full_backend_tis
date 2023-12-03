@@ -14,27 +14,19 @@ class Usuario extends Model
     protected $fillable = ['ID_USUARIO', 'NOMBRE_USUARIO', 'APELLIDO_USUARIO','CI_USUARIO', 'EDAD_USUARIO', 'FOTO_USUARIO'];
 
     public function cargo(){
-        return $this->hasOne(Cargo::class, 'ID_USUARIO', $this->primaryKey);
+        return $this->hasOne(Cargo::class, 'ID_USUARIO', $this->id);
     }
 
     public function relacion_uc(){
-        return $this->hasOne(Relacion_UC::class, 'ID_USUARIO', $this->primaryKey);
+        return $this->hasOne(Relacion_UC::class, 'ID_USUARIO', $this->id);
     }
 
     public function relacion_tu(){
-        return $this->hasOne(Relacion_TU::class, 'ID_USUARIO', $this->primaryKey);
+        return $this->hasOne(Relacion_TU::class, 'ID_USUARIO', $this->id);
     }
 
     public function candidato(){
         return $this->belongsTo(Candidato::class, 'ID_USUARIO', $this->primaryKey);
-    }
-
-    public function miembro_comite(){
-        return $this->belongsTo(Miembros_Comite::class, 'ID_USUARIO', $this->primaryKey);
-    }
-
-    public function relacion_uj(){
-        return $this->hasOne(Jurado::class, 'ID_USUARIO', $this->primaryKey);
     }
 }
 
