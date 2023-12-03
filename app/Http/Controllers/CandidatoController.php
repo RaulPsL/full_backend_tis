@@ -28,14 +28,18 @@ class CandidatoController extends Controller
      */
     public function store(Request $request)
     {
+        $i = 0;
         $data = json_decode($request->getContent(), true);
         foreach ($data as $candidato) {
             $nuevo_candidato = Candidato::create($candidato);
-            $relacion_elecc_frente = new Relacion_ELECC_FRENTE([
-                'ID_FRENTE'=> $candidato['relacion_elecc_frente']['ID_FRENTE'],
-                'ID_ELECCION'=> $candidato['relacion_elecc_frente']['ID_ELECCION'],
-            ]);
-            $nuevo_candidato->frente()->save($relacion_elecc_frente);
+            if($i == 0){
+                $relacion_elecc_frente = new Relacion_ELECC_FRENTE([
+                    'ID_FRENTE'=> $candidato['relacion_elecc_frente']['ID_FRENTE'],
+                    'ID_ELECCION'=> $candidato['relacion_elecc_frente']['ID_ELECCION'],
+                ]); 
+                $nuevo_candidato->frente()->save($relacion_elecc_frente);
+            }
+            $i = $i+1;
         }
     }
 
