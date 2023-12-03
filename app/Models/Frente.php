@@ -12,10 +12,14 @@ class Frente extends Model
     protected $primaryKey = 'ID_FRENTE';
     public $timestamps = false;
     public $increment = true;
-    protected $fillable = ['ID_FRENTE', 'NOMBRE_FRENTE', 'LOGO_FRENTE', 'ACTIVO'];
+    protected $fillable = ['ID_FRENTE', 'ID_CONVOCATORIA', 'NOMBRE_FRENTE', 'LOGO_FRENTE', 'ACTIVO'];
 
-    public function candidatos(){
-        return $this->hasMany(Candidato::class, 'ID_FRENTE', 'id');
+    public function relacion_frente_conv(){
+        return $this->belongsTo(Convocatoria::class, 'ID_CONVOCATORIA', 'ID_CONVOCATORIA');
+    }
+
+    public function relacion_candi_frente(){
+        return $this->hasMany(Candidato::class, 'ID_FRENTE', $this->primaryKey);
     }
 
     public function relacion_elecc_frente(){

@@ -15,8 +15,10 @@ use App\Http\Controllers\Relacion_FCController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
+
+
 use App\Http\Controllers\VotosConstroller;
-use App\Http\Controllers\BoletasController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,6 +29,7 @@ use App\Http\Controllers\BoletasController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+use App\Http\Controllers\VotosController;
 
 Route::get('/votos', [VotosController::class, 'index']);
 Route::post('/votos',[VotosController::class, 'store']);
@@ -34,20 +37,6 @@ Route::put('/votos', [VotosController::class, 'update']);
 Route::resource('votos', VotosController::class)->except([
     'create', 'edit'
 ]);
-Route::get('/generar-boleta', [BoletasController::class, 'generarBoleta']);
-
-/*
-instalar los siguientes comandos para el funcionaminto
-
-composer require barryvdh/laravel-dompdf
-
-php artisan vendor:publish --provider="Barryvdh\DomPDF\ServiceProvider"
-
-composer dump-autoload
-
-para la boleta de impresion
-
-*/
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
