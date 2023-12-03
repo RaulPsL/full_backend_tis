@@ -16,6 +16,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
 
+
+use App\Http\Controllers\VotosConstroller;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,7 +29,14 @@ use App\Http\Controllers\UsuariosController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+use App\Http\Controllers\VotosController;
 
+Route::get('/votos', [VotosController::class, 'index']);
+Route::post('/votos',[VotosController::class, 'store']);
+Route::put('/votos', [VotosController::class, 'update']);
+Route::resource('votos', VotosController::class)->except([
+    'create', 'edit'
+]);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -40,7 +50,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 /**
  * Obtiene los candidatos todos por completo: get
  * Inserta un nuevo candidato: store
- * 
+ *
  * Para ver mejor la sintaxis ingresar a: CandidatoController.php
  */
 Route::controller(CandidatoController::class)->group(
@@ -56,7 +66,7 @@ Route::get('/carreras', [CarreraController::class, 'index']);
 /**
  * Obtiene las convocatorias todas por completo: get
  * Inserta una nueva convocatoria: store
- * 
+ *
  * Para ver mejor la sintaxis ingresar a: ConvocatoriaController.php
  */
 Route::controller(ConvocatoriaController::class)->group(
@@ -68,7 +78,7 @@ Route::controller(ConvocatoriaController::class)->group(
 /**
  * Obtiene las elecciones todas por completo: get
  * Inserta una nueva eleccion: store
- * 
+ *
  * Para ver mejor la sintaxis ingresar a: EleccionController.php
  */
 Route::controller(EleccionController::class)->group(
@@ -79,14 +89,14 @@ Route::controller(EleccionController::class)->group(
 );
 /**
  * Obtiene las facultades todas por completo: get
- * 
+ *
  * Para ver mejor la sintaxis ingresar a: FacultadController.php
  */
 Route::get('/facultades', [FacultadController::class, 'index']);
 /**
  * Obtiene los frentes todas por completo: get
  * Inserta un nuevo frente: store
- * 
+ *
  * Para ver mejor la sintaxis ingresar a: FrenteController.php
  */
 Route::controller(FrenteController::class)->group(
@@ -98,7 +108,7 @@ Route::controller(FrenteController::class)->group(
 );
 
 /**
- * 
+ *
  */
 Route::controller(JuradoController::class)->group(
     function(){
@@ -120,11 +130,18 @@ Route::controller(Miembros_ComiteController::class)->group(
         Route::put('/deletemiembro/{id}', 'destroy');
     }
 );
+Route::controller(MesaContoller::class)->group(
+    function(){
+        Route::get('/mesas', 'index');
+        Route::put('/mesas/{id}', 'update');
 
-Route::get('/mesas', [MesaContoller::class, 'index']);
+    }
+);
+
+// Route::put('/mesas/{id}', [MesaContoller::class, 'update']);
 /**
  * Inserta una nueva convocatoria: store
- * 
+ *
  * Para ver mejor la sintaxis ingresar a: ConvocatoriaController.php
  */
 Route::controller(Relacion_ELECCFRENTEController::class)->group(
@@ -135,7 +152,7 @@ Route::controller(Relacion_ELECCFRENTEController::class)->group(
 
 /**
  * Inserta una nueva convocatoria: store
- * 
+ *
  * Para ver mejor la sintaxis ingresar a: ConvocatoriaController.php
  */
 Route::controller(Relacion_FCController::class)->group(
@@ -146,7 +163,7 @@ Route::controller(Relacion_FCController::class)->group(
 /**
  * Obtiene los usuarios todos por completo: get
  * Busca un usuario por id: show
- * 
+ *
  * Para ver mejor la sintaxis ingresar a: UsuarioController.php
  */
 Route::controller(UsuariosController::class)->group(
