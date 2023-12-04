@@ -38,7 +38,7 @@ php artisan vendor:publish --provider="Barryvdh\DomPDF\ServiceProvider"
 
 composer dump-autoload
 
-para la boleta de impresion
+para la boleta de impresion esos comandos funcionara instalando
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
