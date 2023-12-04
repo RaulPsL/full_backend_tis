@@ -15,10 +15,8 @@ class CreateCandidatosTable extends Migration
     {
         Schema::create('candidato', function (Blueprint $table) {
             $table->id();
+            $table->integer('ID_FRENTE');
             $table->string('CARGO');
-            
-            $table->unsignedBigInteger('ID_FRENTE');
-            $table->foreign('ID_FRENTE')->references('id')->on('frente');
             $table->timestamps();
         });
     }

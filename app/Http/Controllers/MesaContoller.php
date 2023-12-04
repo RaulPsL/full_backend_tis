@@ -54,7 +54,25 @@ class MesaContoller extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Validar el request para asegurar que tiene el formato correcto
+        $request->validate([
+            'votos' => 'required|numeric', // Ajusta las reglas de validación según tus necesidades
+        ]);
+
+        // Buscar la mesa por su ID
+        $mesa = Mesa::find($id);
+
+        // Verificar si la mesa existe
+        if (!$mesa) {
+            return response()->json(['error' => 'Mesa no encontrada'], 404);
+        }
+
+        // Actualizar el campo "VOTOS" con el valor proporcionado en el request
+        $mesa->VOTOS = $request->input('votos');
+        $mesa->save();
+
+        // Retornar la respuesta con la mesa actualizada
+        return response()->json($mesa);
     }
 
     /**
