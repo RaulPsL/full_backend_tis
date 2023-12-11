@@ -11,7 +11,7 @@ class Frente extends Model
     protected $table = 'frente';
     protected $primaryKey = 'ID_FRENTE';
     public $timestamps = false;
-    public $increment = true;
+    public $incrementing = true;
     protected $fillable = ['ID_FRENTE', 'ID_CONVOCATORIA', 'NOMBRE_FRENTE', 'LOGO_FRENTE', 'ACTIVO'];
 
     public function relacion_frente_conv(){
@@ -20,6 +20,10 @@ class Frente extends Model
 
     public function relacion_candi_frente(){
         return $this->hasMany(Candidato::class, 'ID_FRENTE', $this->primaryKey);
+    }
+
+    public function candidatos(){
+        return $this->hasMany(Candidato::class, 'ID_FRENTE','ID_FRENTE');
     }
 
     public function relacion_elecc_frente(){

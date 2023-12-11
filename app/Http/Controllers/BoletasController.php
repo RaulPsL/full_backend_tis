@@ -11,6 +11,7 @@ class BoletasController extends Controller
 {
     public function generarBoleta()
     {
+        $frentes = Frente::All();
         $frentes = Frente::with('candidatos')->get();
         $data = ['frentes' => $frentes, 'title' => 'Boleta Elecciones 2023.'];
         

@@ -15,7 +15,7 @@ use App\Http\Controllers\Relacion_FCController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
-
+use App\Http\Controllers\BoletasController;
 
 use App\Http\Controllers\VotosConstroller;
 
