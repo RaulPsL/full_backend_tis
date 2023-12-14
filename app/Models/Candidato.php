@@ -21,4 +21,9 @@ class Candidato extends Model
     public function usuario(){
         return $this->hasOne(Usuario::class, 'ID_USUARIO', 'ID_USUARIO');
     }
+    
+    public function cargo()
+    {
+    return $this->belongsTo(Cargo::class, 'ID_CARGO', 'ID_CARGO');
+    }
 }
